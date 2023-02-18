@@ -32,13 +32,13 @@ class MainController: CoroutineScope {
         fileChooser.title = "Select File"
         fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("CSV Files", "*.csv"))
         val file: File? = fileChooser.showOpenDialog(null)
-        exampleCourotine()
+        exampleCoroutine()
         file?.run {
             println(file.absolutePath)
         }
     }
 
-    private fun exampleCourotine() {
+    private fun exampleCoroutine() {
         val destination = Destination("google.com", 443, "testing")
         launch {
             statusLabel.text = "Checking ${destination.host}:${destination.port}"
