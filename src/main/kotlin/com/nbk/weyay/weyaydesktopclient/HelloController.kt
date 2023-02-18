@@ -8,7 +8,11 @@ class HelloController {
     private lateinit var welcomeText: Label
 
     @FXML
+    private lateinit var statusLabel: Label
+
+    @FXML
     private fun onHelloButtonClick() {
         welcomeText.text = "Welcome to JavaFX Application!"
+        statusLabel.text = "Button clicked"
     }
 }
