@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.nbk.weyay.weyaydesktopclient
 
 import javafx.collections.FXCollections
@@ -47,11 +49,11 @@ class MainController : CoroutineScope, Initializable {
         fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("CSV Files", "*.csv"))
         val file: File? = fileChooser.showOpenDialog(null)
         exampleCoroutine()
-        val errorHandler = CoroutineExceptionHandler { context, exception ->
-            println(exception.message)
-            println(context.toString())
-        }
-        launch(errorHandler) {
+//        val errorHandler = CoroutineExceptionHandler { context, exception ->
+//            println(exception.message)
+//            println(context.toString())
+//        }
+        launch {
             file?.run {
                 val csvReader = CsvReader(file, setOf("host", "port", "description"))
                 val data = csvReader.readCsv()
@@ -118,7 +120,6 @@ class MainController : CoroutineScope, Initializable {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun exampleCoroutine() {
         val destination = Destination("google.com", 443, "testing")
         launch {
