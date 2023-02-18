@@ -8,6 +8,7 @@ import javafx.scene.SceneAntialiasing
 import javafx.stage.Stage
 
 class PortupineApp : Application() {
+
     override fun start(stage: Stage) {
         val fxmlLoader = FXMLLoader(PortupineApp::class.java.getResource("hello-view.fxml"))
         Scene(fxmlLoader.load(), -1.0, -1.0, true, SceneAntialiasing.BALANCED)
