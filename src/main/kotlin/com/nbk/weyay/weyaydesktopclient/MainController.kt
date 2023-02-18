@@ -18,7 +18,7 @@ import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 
-class MainController: CoroutineScope, Initializable {
+class MainController : CoroutineScope, Initializable {
 
     private var job = Job()
 
@@ -47,19 +47,23 @@ class MainController: CoroutineScope, Initializable {
                     GridPane().apply {
                         val colConstraints = ColumnConstraints(10.0, 60.0, 60.0, Priority.SOMETIMES, null, true)
                         columnConstraints.setAll(colConstraints, colConstraints)
-                        rowConstraints.setAll(RowConstraints(10.0, 30.0, -1.0,  Priority.SOMETIMES, null, true))
+                        rowConstraints.setAll(RowConstraints(10.0, 30.0, -1.0, Priority.SOMETIMES, null, true))
                         add(Button("Button").apply {
                             maxWidth = 200.0
-                            isMnemonicParsing = false }, 0, 0)
+                            isMnemonicParsing = false
+                        }, 0, 0)
                         add(Button("Button").apply {
                             maxWidth = 200.0
-                            isMnemonicParsing = false}, 1, 0)
+                            isMnemonicParsing = false
+                        }, 1, 0)
                     }.also { children.add(it) }
                     TableView<String>().apply {
                         VBox.setVgrow(this, Priority.ALWAYS)
                         columns.addAll(
-                            TableColumn<String, String>().apply { text = "Column 1" },
-                            TableColumn<String, String>().apply { text = "Column 2" }
+                            TableColumn<String, String>().apply { text = "Status" },
+                            TableColumn<String, String>().apply { text = "Host" },
+                            TableColumn<String, String>().apply { text = "Port" },
+                            TableColumn<String, String>().apply { text = "Description" }
                         )
                         prefHeight = 200.0
                         prefWidth = 200.0
@@ -78,8 +82,17 @@ class MainController: CoroutineScope, Initializable {
         fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("CSV Files", "*.csv"))
         val file: File? = fileChooser.showOpenDialog(null)
         exampleCoroutine()
-        file?.run {
-            println(file.absolutePath)
+        val errorHandler = CoroutineExceptionHandler { context, exception ->
+            println(exception.message)
+            println(context.toString())
+        }
+        launch(errorHandler) {
+            file?.run {
+                val csvReader = CsvReader(file, setOf("host", "port", "description"))
+                csvReader.readCsv().forEach {
+                    println(it.entries.toString())
+                }
+            }
         }
     }
 
