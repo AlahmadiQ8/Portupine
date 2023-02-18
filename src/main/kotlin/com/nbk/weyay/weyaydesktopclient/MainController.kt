@@ -1,7 +1,7 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
-
 package com.nbk.weyay.weyaydesktopclient
 
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.geometry.Insets
@@ -34,44 +34,9 @@ class MainController : CoroutineScope, Initializable {
     @FXML
     private lateinit var tabPane: TabPane
 
+    private val tabsData = mutableListOf<ObservableList<Destination>>()
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        val tab = Tab("first").apply {
-            AnchorPane().apply {
-                VBox().apply {
-                    spacing = 5.0
-                    padding = Insets(5.0, 0.0, 0.0, 0.0)
-                    AnchorPane.setTopAnchor(this, 0.0)
-                    AnchorPane.setBottomAnchor(this, 0.0)
-                    AnchorPane.setRightAnchor(this, 0.0)
-                    AnchorPane.setLeftAnchor(this, 0.0)
-                    GridPane().apply {
-                        val colConstraints = ColumnConstraints(10.0, 60.0, 60.0, Priority.SOMETIMES, null, true)
-                        columnConstraints.setAll(colConstraints, colConstraints)
-                        rowConstraints.setAll(RowConstraints(10.0, 30.0, -1.0, Priority.SOMETIMES, null, true))
-                        add(Button("Button").apply {
-                            maxWidth = 200.0
-                            isMnemonicParsing = false
-                        }, 0, 0)
-                        add(Button("Button").apply {
-                            maxWidth = 200.0
-                            isMnemonicParsing = false
-                        }, 1, 0)
-                    }.also { children.add(it) }
-                    TableView<String>().apply {
-                        VBox.setVgrow(this, Priority.ALWAYS)
-                        columns.addAll(
-                            TableColumn<String, String>().apply { text = "Status" },
-                            TableColumn<String, String>().apply { text = "Host" },
-                            TableColumn<String, String>().apply { text = "Port" },
-                            TableColumn<String, String>().apply { text = "Description" }
-                        )
-                        prefHeight = 200.0
-                        prefWidth = 200.0
-                    }.also { children.add(it) }
-                }.also { children.add(it) }
-            }.also { content = it }
-        }
-        tabPane.tabs.add(tab)
         println("initialized")
     }
 
@@ -89,13 +54,71 @@ class MainController : CoroutineScope, Initializable {
         launch(errorHandler) {
             file?.run {
                 val csvReader = CsvReader(file, setOf("host", "port", "description"))
-                csvReader.readCsv().forEach {
-                    println(it.entries.toString())
+                val data = csvReader.readCsv()
+                val tableData = FXCollections.observableArrayList<Destination>()
+                // TODO: catch NumberFormatException for toInt
+                data.forEach {
+                    val destination = Destination(
+                        it.getValue("host"),
+                        it.getValue("port").toInt(),
+                        it.getValue("description")
+                    )
+                    println(destination)
+                    tableData.add(destination)
+                }
+
+                tabsData.add(tableData)
+
+                val tab = Tab(file.nameWithoutExtension).apply {
+                    AnchorPane().apply {
+                        VBox().apply {
+                            spacing = 5.0
+                            padding = Insets(5.0, 0.0, 0.0, 0.0)
+                            AnchorPane.setTopAnchor(this, 0.0)
+                            AnchorPane.setBottomAnchor(this, 0.0)
+                            AnchorPane.setRightAnchor(this, 0.0)
+                            AnchorPane.setLeftAnchor(this, 0.0)
+                            GridPane().apply {
+                                val colConstraints = ColumnConstraints(10.0, 60.0, 60.0, Priority.SOMETIMES, null, true)
+                                columnConstraints.setAll(colConstraints, colConstraints)
+                                rowConstraints.setAll(RowConstraints(10.0, 30.0, -1.0, Priority.SOMETIMES, null, true))
+                                add(Button("Button").apply {
+                                    maxWidth = 200.0
+                                    isMnemonicParsing = false
+                                }, 0, 0)
+                                add(Button("Button").apply {
+                                    maxWidth = 200.0
+                                    isMnemonicParsing = false
+                                }, 1, 0)
+                            }.also { children.add(it) }
+                            TableView<Destination>().apply {
+                                AnchorPane.setRightAnchor(this, 0.0)
+                                VBox.setVgrow(this, Priority.ALWAYS)
+                                items = tabsData.first()
+                                columns.addAll(
+                                    createColumn("Status", "status"),
+                                    createColumn("Host", "host"),
+                                    createColumn("Port", "port"),
+                                    createColumn("Description", "description")
+                                )
+                                prefHeight = 200.0
+                                prefWidth = 200.0
+                            }.also { children.add(it) }
+                        }.also { children.add(it) }
+                    }.also { content = it }
+                }
+                tabPane.tabs.run {
+                    if (size == 1) {
+                        this[0] = tab
+                    } else {
+                        add(tab)
+                    }
                 }
             }
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun exampleCoroutine() {
         val destination = Destination("google.com", 443, "testing")
         launch {

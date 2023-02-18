@@ -9,7 +9,7 @@ class CsvReader(file: File, requiredHeaders: Set<String>): Closeable {
 
     private val fileReader = FileReader(file)
     private var bufferedReader: BufferedReader = BufferedReader(fileReader)
-    private val colHeaders: LinkedHashMap<String, Int> = LinkedHashMap()
+    private val colHeaders: LinkedHashMap<Int, String> = LinkedHashMap()
 
     init {
         // read first line
@@ -20,12 +20,22 @@ class CsvReader(file: File, requiredHeaders: Set<String>): Closeable {
                 }
             }
         }.forEachIndexed { index, key ->
-            colHeaders[key] = index
+            colHeaders[index] = key
         }
     }
 
     fun readCsv(): List<HashMap<String, String>> {
-        TODO("Not Implemented")
+        val result = mutableListOf<HashMap<String, String>>()
+        bufferedReader.forEachLine {line ->
+            val map = HashMap<String, String>()
+            line.split(",").forEachIndexed { colIndex, value ->
+                colHeaders[colIndex]?.run {
+                    map[this] = value
+                }
+                result.add(map)
+            }
+        }
+        return result
     }
 
     override fun close() {

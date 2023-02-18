@@ -1,6 +1,7 @@
 package com.nbk.weyay.weyaydesktopclient
 
 import kotlinx.coroutines.delay
+import java.io.File
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -18,3 +19,10 @@ suspend fun isReachable(destination: Destination): Boolean {
         }
     }
 }
+
+val File.nameWithoutExtension: String
+    get() = if (this.name.indexOf(".") > 0) {
+        this.name.substring(0, this.name.lastIndexOf("."))
+    } else {
+        this.name
+    }
