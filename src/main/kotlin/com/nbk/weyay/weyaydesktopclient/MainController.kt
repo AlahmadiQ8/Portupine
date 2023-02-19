@@ -21,6 +21,7 @@ import kotlin.collections.ArrayDeque
 import kotlin.coroutines.CoroutineContext
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainController : CoroutineScope, Initializable {
 
     private var job = Job()
@@ -105,10 +106,17 @@ class MainController : CoroutineScope, Initializable {
         return EventHandler {
             val currentTab = tabPane.selectionModel.selectedItem.content as AnchorPane
             val table = findNodeBFS(currentTab as Parent) { it is TableView<*>}!! as TableView<Destination>
-            table.selectionModel.selectedItem?.run {
+            table.selectionModel.selectedItem?.let { destination ->
                 launch {
-                    port = 122344
-                    table.items[table.items.indexOf(this@run)] = this@run
+                    val statusProducer = produce {
+                        destination.status = Status.LOADING
+                        table.items[table.items.indexOf(destination)] = destination
+                        send(isReachable(destination))
+                    }
+                    statusProducer.consumeEach {
+                        destination.status = if (it) Status.REACHABLE else Status.UNREACHABLE
+                        table.items[table.items.indexOf(destination)] = destination
+                    }
                 }
             }
         }
