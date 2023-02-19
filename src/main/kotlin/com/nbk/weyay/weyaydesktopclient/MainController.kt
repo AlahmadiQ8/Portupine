@@ -1,7 +1,6 @@
 package com.nbk.weyay.weyaydesktopclient
 
 import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
@@ -38,8 +37,6 @@ class MainController : CoroutineScope, Initializable {
     @FXML
     private lateinit var tabPane: TabPane
 
-    private val tabsData = mutableListOf<ObservableList<Destination>>()
-
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         println("initialized")
     }
@@ -70,8 +67,7 @@ class MainController : CoroutineScope, Initializable {
                     tableData.add(destination)
                 }
 
-                tabsData.add(tableData)
-                val tab = createTableTab(file.nameWithoutExtension, tabsData.last(), onCheckSingle())
+                val tab = createTableTab(file.nameWithoutExtension, tableData, onCheckSingle())
                 tabPane.tabs.run {
                     if (size == 1) {
                         this[0] = tab
@@ -98,8 +94,8 @@ class MainController : CoroutineScope, Initializable {
             )
             tableData.add(destination)
         }
-        tabsData.add(tableData)
-        val tab = createTableTab("example", tabsData.first(), onCheckSingle())
+
+        val tab = createTableTab("example", tableData, onCheckSingle())
         tabPane.tabs.add(tab)
         tabPane.selectionModel.select(tab)
     }
