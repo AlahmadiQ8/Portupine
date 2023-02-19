@@ -1,10 +1,12 @@
 package com.nbk.weyay.weyaydesktopclient
 
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.geometry.Insets
 import javafx.scene.Parent
 import javafx.scene.control.*
 import javafx.scene.layout.*
@@ -17,7 +19,6 @@ import java.io.File
 import java.io.FileReader
 import java.net.URL
 import java.util.*
-import kotlin.collections.ArrayDeque
 import kotlin.coroutines.CoroutineContext
 
 
@@ -36,7 +37,10 @@ class MainController : CoroutineScope, Initializable {
     private lateinit var statusLabel: Label
 
     @FXML
-    private lateinit var tabPane: TabPane
+    private lateinit var tabsPane: TabPane
+
+    @FXML
+    private lateinit var welcomePane: AnchorPane
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         println("initialized")
@@ -68,14 +72,7 @@ class MainController : CoroutineScope, Initializable {
                     tableData.add(destination)
                 }
 
-                val tab = createTableTab(file.nameWithoutExtension, tableData, onCheckSingle())
-                tabPane.tabs.run {
-                    if (size == 1) {
-                        this[0] = tab
-                    } else {
-                        add(tab)
-                    }
-                }
+                createTableTab(file.nameWithoutExtension, tableData, onCheckSingle())
             }
         }
     }
@@ -96,16 +93,14 @@ class MainController : CoroutineScope, Initializable {
             tableData.add(destination)
         }
 
-        val tab = createTableTab("example", tableData, onCheckSingle())
-        tabPane.tabs.add(tab)
-        tabPane.selectionModel.select(tab)
+        createTableTab("example", tableData, onCheckSingle())
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun onCheckSingle(): EventHandler<ActionEvent> {
         return EventHandler {
-            val currentTab = tabPane.selectionModel.selectedItem.content as AnchorPane
-            val table = findNodeBFS(currentTab as Parent) { it is TableView<*>}!! as TableView<Destination>
+            val currentTab = tabsPane.selectionModel.selectedItem.content as AnchorPane
+            val table = (currentTab as Parent).findNodeBFS { it is TableView<*> }!! as TableView<Destination>
             table.selectionModel.selectedItem?.let { destination ->
                 launch {
                     val statusProducer = produce {
@@ -122,28 +117,61 @@ class MainController : CoroutineScope, Initializable {
         }
     }
 
-    private fun findNodeBFS(start: Parent, predicate: (c: Parent) -> Boolean): Parent? {
-        val queue = ArrayDeque<Parent>()
-        queue.add(start)
-
-        var current: Parent?
-
-        while (!queue.isEmpty()) {
-            current = queue.removeFirst()
-
-            if (predicate(current)) {
-                return current
-            } else {
-                current.childrenUnmodifiable.forEach {
-                    queue.add(it as Parent)
+    private fun <T> createTableTab(tabName: String, tableData: ObservableList<T>, eventHandler: EventHandler<ActionEvent>) {
+        val tab = Tab(tabName).apply {
+            onClosed = EventHandler {
+                println(tabsPane)
+                if (tabsPane.tabs.size == 0) {
+                    launch {
+                        welcomePane.isVisible = true
+                    }
                 }
             }
+            AnchorPane().apply {
+                VBox().apply {
+                    spacing = 5.0
+                    padding = Insets(5.0, 0.0, 0.0, 0.0)
+                    AnchorPane.setTopAnchor(this, 0.0)
+                    AnchorPane.setBottomAnchor(this, 0.0)
+                    AnchorPane.setRightAnchor(this, 0.0)
+                    AnchorPane.setLeftAnchor(this, 0.0)
+                    GridPane().apply {
+                        val colConstraints = ColumnConstraints(10.0, 60.0, 60.0, Priority.SOMETIMES, null, true)
+                        columnConstraints.setAll(colConstraints, colConstraints)
+                        rowConstraints.setAll(RowConstraints(10.0, 30.0, -1.0, Priority.SOMETIMES, null, true))
+                        add(Button("Test Selected").apply {
+                            maxWidth = 200.0
+                            isMnemonicParsing = false
+                            onAction = eventHandler
+                        }, 0, 0)
+                        add(Button("Button").apply {
+                            maxWidth = 200.0
+                            isMnemonicParsing = false
+                        }, 1, 0)
+                    }.also { children.add(it) }
+                    TableView<T>().apply {
+                        AnchorPane.setRightAnchor(this, 0.0)
+                        VBox.setVgrow(this, Priority.ALWAYS)
+                        items = tableData
+                        columns.addAll(
+                            createColumn("Status", "status"),
+                            createColumn("Host", "host"),
+                            createColumn("Port", "port"),
+                            createColumn("Description", "description")
+                        )
+                        prefHeight = 200.0
+                        prefWidth = 200.0
+                    }.also { children.add(it) }
+                }.also { children.add(it) }
+            }.also { content = it }
         }
 
-        return null
+        launch {
+            tabsPane.tabs.add(tab)
+            welcomePane.isVisible = false
+            tabsPane.selectionModel.select(tab)
+        }
     }
-
-
 
     @Suppress("OPT_IN_USAGE")
     private fun exampleCoroutine() {

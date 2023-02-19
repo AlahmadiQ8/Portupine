@@ -10,9 +10,9 @@ const val TIMEOUT_MS = 3000
 
 suspend fun isReachable(destination: Destination): Boolean {
     delay(2000)
-    Socket().apply {
+    Socket().use {
         return try {
-            connect(InetSocketAddress(destination.host, destination.port), TIMEOUT_MS)
+            it.connect(InetSocketAddress(destination.host, destination.port), TIMEOUT_MS)
             true
         } catch (e: IOException) {
             false
