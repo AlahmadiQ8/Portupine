@@ -5,18 +5,22 @@ import java.io.File
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.util.Random
 
 const val TIMEOUT_MS = 3000
 
-suspend fun isReachable(destination: Destination): Boolean {
-    delay(2000)
+suspend fun checkReachability(destination: Destination): Destination {
+    val randomGenerator = Random()
+    val duration = randomGenerator.nextInt(1000, 3000)
+    delay(duration.toLong())
     Socket().use {
-        return try {
+        try {
             it.connect(InetSocketAddress(destination.host, destination.port), TIMEOUT_MS)
-            true
+            destination.status = Status.REACHABLE
         } catch (e: IOException) {
-            false
+            destination.status = Status.UNREACHABLE
         }
+        return destination
     }
 }
 

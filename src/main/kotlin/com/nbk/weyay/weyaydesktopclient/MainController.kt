@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package com.nbk.weyay.weyaydesktopclient
 
 import javafx.collections.FXCollections
@@ -12,6 +14,7 @@ import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.stage.FileChooser
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.javafx.JavaFx
@@ -23,6 +26,7 @@ import kotlin.coroutines.CoroutineContext
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@Suppress("OPT_IN_USAGE")
 class MainController : CoroutineScope, Initializable {
 
     private var job = Job()
@@ -72,7 +76,7 @@ class MainController : CoroutineScope, Initializable {
                     tableData.add(destination)
                 }
 
-                createTableTab(file.nameWithoutExtension, tableData, onCheckSingle())
+                createTableTab(file.nameWithoutExtension, tableData)
             }
         }
     }
@@ -93,10 +97,9 @@ class MainController : CoroutineScope, Initializable {
             tableData.add(destination)
         }
 
-        createTableTab("example", tableData, onCheckSingle())
+        createTableTab("example", tableData)
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun onCheckSingle(): EventHandler<ActionEvent> {
         return EventHandler {
             val currentTab = tabsPane.selectionModel.selectedItem.content as AnchorPane
@@ -106,18 +109,37 @@ class MainController : CoroutineScope, Initializable {
                     val statusProducer = produce {
                         destination.status = Status.LOADING
                         table.items[table.items.indexOf(destination)] = destination
-                        send(isReachable(destination))
+                        send(checkReachability(destination))
                     }
                     statusProducer.consumeEach {
-                        destination.status = if (it) Status.REACHABLE else Status.UNREACHABLE
-                        table.items[table.items.indexOf(destination)] = destination
+                        table.items[table.items.indexOf(it)] = it
                     }
                 }
             }
         }
     }
 
-    private fun <T> createTableTab(tabName: String, tableData: ObservableList<T>, eventHandler: EventHandler<ActionEvent>) {
+    private fun checkAllRows(): EventHandler<ActionEvent> {
+        return EventHandler {
+            val currentTab = tabsPane.selectionModel.selectedItem.content as AnchorPane
+            val table = (currentTab as Parent).findNodeBFS { it is TableView<*> }!! as TableView<Destination>
+            val channel = Channel<Destination>()
+            table.items.forEach {
+                launch {
+                    it.status = Status.LOADING
+                    table.items[table.items.indexOf(it)] = it
+                    channel.send(checkReachability(it))
+                }
+            }
+            launch {
+                channel.consumeEach {
+                    table.items[table.items.indexOf(it)] = it
+                }
+            }
+        }
+    }
+
+    private fun <T> createTableTab(tabName: String, tableData: ObservableList<T>) {
         val tab = Tab(tabName).apply {
             onClosed = EventHandler {
                 println(tabsPane)
@@ -142,11 +164,12 @@ class MainController : CoroutineScope, Initializable {
                         add(Button("Test Selected").apply {
                             maxWidth = 200.0
                             isMnemonicParsing = false
-                            onAction = eventHandler
+                            onAction = onCheckSingle()
                         }, 0, 0)
-                        add(Button("Button").apply {
+                        add(Button("All").apply {
                             maxWidth = 200.0
                             isMnemonicParsing = false
+                            onAction = checkAllRows()
                         }, 1, 0)
                     }.also { children.add(it) }
                     TableView<T>().apply {
@@ -173,16 +196,15 @@ class MainController : CoroutineScope, Initializable {
         }
     }
 
-    @Suppress("OPT_IN_USAGE")
     private fun exampleCoroutine() {
         val destination = Destination("google.com", 443, "testing")
         launch {
             statusLabel.text = "Checking ${destination.host}:${destination.port}"
             destination.status = Status.LOADING
-            val statusProducer = produce { send(isReachable(destination)) }
+            val statusProducer = produce { send(checkReachability(destination)) }
             statusProducer.consumeEach {
                 statusLabel.text = "${destination.host}:${destination.port} is $it"
-                destination.status = if (it) Status.REACHABLE else Status.UNREACHABLE
+//                destination.status = if (it) Status.REACHABLE else Status.UNREACHABLE
                 println(destination.status.text + destination.description)
             }
         }
