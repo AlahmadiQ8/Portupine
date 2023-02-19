@@ -1,9 +1,5 @@
 name: Add bugs to bugs project
 
-permissions:
-  repository-projects: write
-  issues: read
-
 on:
   issues:
     types:
@@ -17,4 +13,4 @@ jobs:
       - uses: actions/add-to-project@v0.4.0
         with:
           project-url: https://github.com/users/AlahmadiQ8/projects/2
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PAT_REPO_PROJECT }}
