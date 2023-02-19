@@ -2,6 +2,7 @@ name: Add bugs to bugs project
 
 permissions:
   repository-projects: write
+  issues: read
 
 on:
   issues:
