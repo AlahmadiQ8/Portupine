@@ -164,19 +164,19 @@ class MainController : CoroutineScope, Initializable {
                     AnchorPane.setRightAnchor(this, 0.0)
                     AnchorPane.setLeftAnchor(this, 0.0)
                     GridPane().apply {
-                        val colConstraints = ColumnConstraints(10.0, 60.0, 60.0, Priority.SOMETIMES, null, true)
+                        padding = Insets(0.0, 0.0, 0.0, 5.0)
+                        val colConstraints = ColumnConstraints(10.0, 30.0, 35.0, Priority.SOMETIMES, null, true)
                         columnConstraints.setAll(colConstraints, colConstraints)
-                        rowConstraints.setAll(RowConstraints(10.0, 30.0, -1.0, Priority.SOMETIMES, null, true))
+                        rowConstraints.setAll(RowConstraints(10.0, 30.0, 35.0, Priority.SOMETIMES, null, true))
                         add(Button().apply {
-                            maxWidth = 200.0
                             isMnemonicParsing = false
                             onAction = onCheckSelected()
-                            graphic = FontIcon("fab-accessible-icon")
+                            graphic = FontIcon("fas-step-forward:15:GREEN")
                         }, 0, 0)
-                        add(Button("All").apply {
-                            maxWidth = 200.0
+                        add(Button().apply {
                             isMnemonicParsing = false
                             onAction = checkAllRows()
+                            graphic = FontIcon("fas-fast-forward:15:GREEN")
                         }, 1, 0)
                     }.also { children.add(it) }
                     TableView<T>().apply {
