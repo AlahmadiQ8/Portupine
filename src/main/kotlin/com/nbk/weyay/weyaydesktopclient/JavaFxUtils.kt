@@ -1,6 +1,8 @@
 package com.nbk.weyay.weyaydesktopclient
 
 import javafx.collections.ObservableList
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.control.Button
 import javafx.scene.control.Tab
@@ -16,7 +18,7 @@ fun <T> createColumn(text: String, propertyName: String): TableColumn<T, String>
     }
 }
 
-fun <T> createTableTab(tabName: String, tableData: ObservableList<T>) =
+fun <T> createTableTab(tabName: String, tableData: ObservableList<T>, eventHandler: EventHandler<ActionEvent>) =
     Tab(tabName).apply {
         AnchorPane().apply {
             VBox().apply {
@@ -30,9 +32,10 @@ fun <T> createTableTab(tabName: String, tableData: ObservableList<T>) =
                     val colConstraints = ColumnConstraints(10.0, 60.0, 60.0, Priority.SOMETIMES, null, true)
                     columnConstraints.setAll(colConstraints, colConstraints)
                     rowConstraints.setAll(RowConstraints(10.0, 30.0, -1.0, Priority.SOMETIMES, null, true))
-                    add(Button("Button").apply {
+                    add(Button("Test Selected").apply {
                         maxWidth = 200.0
                         isMnemonicParsing = false
+                        onAction = eventHandler
                     }, 0, 0)
                     add(Button("Button").apply {
                         maxWidth = 200.0

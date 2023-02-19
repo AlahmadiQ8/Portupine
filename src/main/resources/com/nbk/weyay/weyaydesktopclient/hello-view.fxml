@@ -50,7 +50,7 @@
     <MenuBar VBox.vgrow="NEVER">
         <Menu mnemonicParsing="false" text="File">
             <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem mnemonicParsing="false" onAction="#onHelloButtonClick" text="Open…" />
+            <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open…" />
             <Menu mnemonicParsing="false" text="Open Recent" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Save" />
@@ -75,7 +75,7 @@
                             </font>
                         </Label>
                         <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
-                            <Button mnemonicParsing="false" onAction="#onHelloButtonClick" text="Open File"/>
+                            <Button mnemonicParsing="false" onAction="#openFile" text="Open File"/>
                             <Button mnemonicParsing="false" onAction="#loadExample" text="Load example"/>
                         </HBox>
                     </VBox>

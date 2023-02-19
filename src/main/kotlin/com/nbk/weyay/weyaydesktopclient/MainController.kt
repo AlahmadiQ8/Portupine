@@ -1,11 +1,12 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
-
 package com.nbk.weyay.weyaydesktopclient
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.Parent
 import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.stage.FileChooser
@@ -17,6 +18,7 @@ import java.io.File
 import java.io.FileReader
 import java.net.URL
 import java.util.*
+import kotlin.collections.ArrayDeque
 import kotlin.coroutines.CoroutineContext
 
 
@@ -43,7 +45,7 @@ class MainController : CoroutineScope, Initializable {
     }
 
     @FXML
-    private fun onHelloButtonClick() {
+    private fun openFile() {
         val fileChooser = FileChooser()
         fileChooser.title = "Select File"
         fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("CSV Files", "*.csv"))
@@ -69,7 +71,7 @@ class MainController : CoroutineScope, Initializable {
                 }
 
                 tabsData.add(tableData)
-                val tab = createTableTab(file.nameWithoutExtension, tabsData.last())
+                val tab = createTableTab(file.nameWithoutExtension, tabsData.last(), onCheckSingle())
                 tabPane.tabs.run {
                     if (size == 1) {
                         this[0] = tab
@@ -97,11 +99,49 @@ class MainController : CoroutineScope, Initializable {
             tableData.add(destination)
         }
         tabsData.add(tableData)
-        val tab = createTableTab("example", tabsData.first())
+        val tab = createTableTab("example", tabsData.first(), onCheckSingle())
         tabPane.tabs.add(tab)
         tabPane.selectionModel.select(tab)
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun onCheckSingle(): EventHandler<ActionEvent> {
+        return EventHandler {
+            val currentTab = tabPane.selectionModel.selectedItem.content as AnchorPane
+            val table = findNodeBFS(currentTab as Parent) { it is TableView<*>}!! as TableView<Destination>
+            table.selectionModel.selectedItem?.run {
+                launch {
+                    port = 122344
+                    table.items[table.items.indexOf(this@run)] = this@run
+                }
+            }
+        }
+    }
+
+    private fun findNodeBFS(start: Parent, predicate: (c: Parent) -> Boolean): Parent? {
+        val queue = ArrayDeque<Parent>()
+        queue.add(start)
+
+        var current: Parent?
+
+        while (!queue.isEmpty()) {
+            current = queue.removeFirst()
+
+            if (predicate(current)) {
+                return current
+            } else {
+                current.childrenUnmodifiable.forEach {
+                    queue.add(it as Parent)
+                }
+            }
+        }
+
+        return null
+    }
+
+
+
+    @Suppress("OPT_IN_USAGE")
     private fun exampleCoroutine() {
         val destination = Destination("google.com", 443, "testing")
         launch {
