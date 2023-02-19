@@ -18,6 +18,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.javafx.JavaFx
+import org.kordamp.ikonli.javafx.FontIcon
 import java.io.File
 import java.io.FileReader
 import java.net.URL
@@ -166,10 +167,11 @@ class MainController : CoroutineScope, Initializable {
                         val colConstraints = ColumnConstraints(10.0, 60.0, 60.0, Priority.SOMETIMES, null, true)
                         columnConstraints.setAll(colConstraints, colConstraints)
                         rowConstraints.setAll(RowConstraints(10.0, 30.0, -1.0, Priority.SOMETIMES, null, true))
-                        add(Button("Test Selected").apply {
+                        add(Button().apply {
                             maxWidth = 200.0
                             isMnemonicParsing = false
                             onAction = onCheckSelected()
+                            graphic = FontIcon("fab-accessible-icon")
                         }, 0, 0)
                         add(Button("All").apply {
                             maxWidth = 200.0
