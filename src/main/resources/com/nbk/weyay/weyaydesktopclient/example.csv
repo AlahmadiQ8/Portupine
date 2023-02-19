@@ -1,0 +1,4 @@
+host,port,description
+google.com,443,Sample Site
+localhost,1433,SQL Server
+localhost,80,Local Server

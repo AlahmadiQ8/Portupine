@@ -6,7 +6,6 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.stage.FileChooser
@@ -15,6 +14,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.javafx.JavaFx
 import java.io.File
+import java.io.FileReader
 import java.net.URL
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -49,14 +49,13 @@ class MainController : CoroutineScope, Initializable {
         fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("CSV Files", "*.csv"))
         val file: File? = fileChooser.showOpenDialog(null)
         exampleCoroutine()
-//        val errorHandler = CoroutineExceptionHandler { context, exception ->
-//            println(exception.message)
-//            println(context.toString())
-//        }
-        launch {
+        val errorHandler = CoroutineExceptionHandler { context, exception ->
+            println(exception.message)
+            println(context.toString())
+        }
+        launch(errorHandler) {
             file?.run {
-                val csvReader = CsvReader(file, setOf("host", "port", "description"))
-                val data = csvReader.readCsv()
+                val data = FileReader(this).readCsv(setOf("host", "port", "description"))
                 val tableData = FXCollections.observableArrayList<Destination>()
                 // TODO: catch NumberFormatException for toInt
                 data.forEach {
@@ -70,45 +69,7 @@ class MainController : CoroutineScope, Initializable {
                 }
 
                 tabsData.add(tableData)
-
-                val tab = Tab(file.nameWithoutExtension).apply {
-                    AnchorPane().apply {
-                        VBox().apply {
-                            spacing = 5.0
-                            padding = Insets(5.0, 0.0, 0.0, 0.0)
-                            AnchorPane.setTopAnchor(this, 0.0)
-                            AnchorPane.setBottomAnchor(this, 0.0)
-                            AnchorPane.setRightAnchor(this, 0.0)
-                            AnchorPane.setLeftAnchor(this, 0.0)
-                            GridPane().apply {
-                                val colConstraints = ColumnConstraints(10.0, 60.0, 60.0, Priority.SOMETIMES, null, true)
-                                columnConstraints.setAll(colConstraints, colConstraints)
-                                rowConstraints.setAll(RowConstraints(10.0, 30.0, -1.0, Priority.SOMETIMES, null, true))
-                                add(Button("Button").apply {
-                                    maxWidth = 200.0
-                                    isMnemonicParsing = false
-                                }, 0, 0)
-                                add(Button("Button").apply {
-                                    maxWidth = 200.0
-                                    isMnemonicParsing = false
-                                }, 1, 0)
-                            }.also { children.add(it) }
-                            TableView<Destination>().apply {
-                                AnchorPane.setRightAnchor(this, 0.0)
-                                VBox.setVgrow(this, Priority.ALWAYS)
-                                items = tabsData.first()
-                                columns.addAll(
-                                    createColumn("Status", "status"),
-                                    createColumn("Host", "host"),
-                                    createColumn("Port", "port"),
-                                    createColumn("Description", "description")
-                                )
-                                prefHeight = 200.0
-                                prefWidth = 200.0
-                            }.also { children.add(it) }
-                        }.also { children.add(it) }
-                    }.also { content = it }
-                }
+                val tab = createTableTab(file.nameWithoutExtension, tabsData.last())
                 tabPane.tabs.run {
                     if (size == 1) {
                         this[0] = tab
@@ -118,6 +79,27 @@ class MainController : CoroutineScope, Initializable {
                 }
             }
         }
+    }
+
+    @FXML
+    private fun loadExample() {
+        val data = MainController::class.java.getResourceAsStream("example.csv")
+            ?.reader()
+            ?.readCsv(setOf("host", "port", "description"))
+            ?: error("Cannot open/find the file")
+        val tableData = FXCollections.observableArrayList<Destination>()
+        data.forEach {
+            val destination = Destination(
+                it.getValue("host"),
+                it.getValue("port").toInt(),
+                it.getValue("description")
+            )
+            tableData.add(destination)
+        }
+        tabsData.add(tableData)
+        val tab = createTableTab("example", tabsData.first())
+        tabPane.tabs.add(tab)
+        tabPane.selectionModel.select(tab)
     }
 
     private fun exampleCoroutine() {
