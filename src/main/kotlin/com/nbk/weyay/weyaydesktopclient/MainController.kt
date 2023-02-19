@@ -100,22 +100,11 @@ class MainController : CoroutineScope, Initializable {
         createTableTab("example", tableData)
     }
 
-    private fun onCheckSingle(): EventHandler<ActionEvent> {
+    private fun onCheckSelected(): EventHandler<ActionEvent> {
         return EventHandler {
             val currentTab = tabsPane.selectionModel.selectedItem.content as AnchorPane
             val table = (currentTab as Parent).findNodeBFS { it is TableView<*> }!! as TableView<Destination>
-            table.selectionModel.selectedItem?.let { destination ->
-                launch {
-                    val statusProducer = produce {
-                        destination.status = Status.LOADING
-                        table.items[table.items.indexOf(destination)] = destination
-                        send(checkReachability(destination))
-                    }
-                    statusProducer.consumeEach {
-                        table.items[table.items.indexOf(it)] = it
-                    }
-                }
-            }
+            table.checkSelectedRow()
         }
     }
 
@@ -135,6 +124,22 @@ class MainController : CoroutineScope, Initializable {
                 channel.consumeEach {
                     table.items[table.items.indexOf(it)] = it
                 }
+            }
+        }
+    }
+
+    private fun TableView<Destination>.checkSelectedRow() {
+        val channel = Channel<Destination>()
+        selectionModel.selectedItems.forEach {
+            launch {
+                it.status = Status.LOADING
+                items[items.indexOf(it)] = it
+                channel.send(checkReachability(it))
+            }
+        }
+        launch {
+            channel.consumeEach {
+                items[items.indexOf(it)] = it
             }
         }
     }
@@ -164,7 +169,7 @@ class MainController : CoroutineScope, Initializable {
                         add(Button("Test Selected").apply {
                             maxWidth = 200.0
                             isMnemonicParsing = false
-                            onAction = onCheckSingle()
+                            onAction = onCheckSelected()
                         }, 0, 0)
                         add(Button("All").apply {
                             maxWidth = 200.0
@@ -173,6 +178,7 @@ class MainController : CoroutineScope, Initializable {
                         }, 1, 0)
                     }.also { children.add(it) }
                     TableView<T>().apply {
+                        selectionModel.selectionMode = SelectionMode.MULTIPLE
                         AnchorPane.setRightAnchor(this, 0.0)
                         VBox.setVgrow(this, Priority.ALWAYS)
                         items = tableData
