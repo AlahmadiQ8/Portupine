@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.Button?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.scene.control.TableView?>
+<Tab fx:id="tab" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.nbk.weyay.weyaydesktopclient.TableTabController">
+	<AnchorPane>
+		<VBox spacing="5" padding="5 0 0 0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+			<GridPane padding="0 0 0 5">
+				<fx:define>
+					<ColumnConstraints fx:id="colConstraints" minWidth="10" prefWidth="30" maxWidth="35" hgrow="SOMETIMES" />
+				</fx:define>
+				<columnConstraints>
+					<fx:reference source="colConstraints"/>
+					<fx:reference source="colConstraints"/>
+				</columnConstraints>
+				<rowConstraints>
+					<RowConstraints minHeight="10" prefHeight="30" maxHeight="35" vgrow="SOMETIMES" />
+				</rowConstraints>
+				<children>
+					<Button mnemonicParsing="false" onAction="#onCheckSelected">
+						<FontIcon iconCode="fas-step-forward:15:GREEN" />
+					</Button>
+					<Button mnemonicParsing="false" onAction="#onCheckAll">
+						<FontIcon iconCode="fas-fast-forward:15:GREEN" />
+					</Button>
+				</children>
+			</GridPane>
+			<TableView fx:id="table" AnchorPane.rightAnchor="0" VBox.vgrow="ALWAYS">
+
+			</TableView>
+		</VBox>
+	</AnchorPane>
+</Tab>

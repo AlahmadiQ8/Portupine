@@ -10,7 +10,7 @@ import javafx.stage.Stage
 class PortupineApp : Application() {
 
     override fun start(stage: Stage) {
-        val fxmlLoader = FXMLLoader(PortupineApp::class.java.getResource("hello-view.fxml"))
+        val fxmlLoader = FXMLLoader(PortupineApp::class.java.getResource("main-view.fxml"))
         Scene(fxmlLoader.load(), -1.0, -1.0, true, SceneAntialiasing.BALANCED)
             .run { stage.scene = this }
         stage.title = "Portupine - by alahmadiq8.github.io"
