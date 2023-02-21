@@ -13,7 +13,7 @@ class PortupineApp : Application() {
         val fxmlLoader = FXMLLoader(PortupineApp::class.java.getResource("main-view.fxml"))
         Scene(fxmlLoader.load(), -1.0, -1.0, true, SceneAntialiasing.BALANCED)
             .run { stage.scene = this }
-        stage.title = "Portupine - by alahmadiq8.github.io"
+        stage.title = "Portupine"
         stage.show()
     }
 }
