@@ -15,7 +15,7 @@ suspend fun checkReachability(destination: Destination): Destination {
     delay(duration.toLong())
     Socket().use {
         try {
-            it.connect(InetSocketAddress(destination.host, destination.port), TIMEOUT_MS)
+            it.connect(InetSocketAddress(destination.host, destination.port.toInt()), TIMEOUT_MS)
             destination.status = Status.REACHABLE
         } catch (e: IOException) {
             destination.status = Status.UNREACHABLE
