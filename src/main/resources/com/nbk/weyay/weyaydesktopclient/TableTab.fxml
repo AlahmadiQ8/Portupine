@@ -11,9 +11,10 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.HBox?>
 <Tab xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.nbk.weyay.weyaydesktopclient.TableTabController">
 	<AnchorPane>
-		<VBox spacing="5" style="-fx-padding: 0 0 0 5;" AnchorPane.topAnchor="5" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+		<VBox minHeight="300" spacing="5" style="-fx-padding: 0 0 0 5;" AnchorPane.topAnchor="5" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 			<GridPane style="-fx-padding: 0 0 0 5;">
 				<fx:define>
 					<ColumnConstraints fx:id="colConstraints" minWidth="10" prefWidth="30" maxWidth="35" hgrow="SOMETIMES"/>
@@ -36,30 +37,44 @@
 					</graphic>
 				</Button>
 			</GridPane>
-			<TableView fx:id="table" prefHeight="200" prefWidth="200" AnchorPane.rightAnchor="0" VBox.vgrow="ALWAYS">
-				<columns>
-					<TableColumn text="Status" >
-						<cellValueFactory>
-							<PropertyValueFactory property="status" />
-						</cellValueFactory>
-					</TableColumn>
-					<TableColumn text="Host">
-						<cellValueFactory>
-							<PropertyValueFactory property="host" />
-						</cellValueFactory>
-					</TableColumn>
-					<TableColumn text="Port">
-						<cellValueFactory>
-							<PropertyValueFactory property="port" />
-						</cellValueFactory>
-					</TableColumn>
-					<TableColumn text="Description">
-						<cellValueFactory>
-							<PropertyValueFactory property="Description" />
-						</cellValueFactory>
-					</TableColumn>
-				</columns>
-			</TableView>
+			<VBox>
+				<HBox style="-fx-border-width: 1 1 0 1; -fx-border-color: -fx-box-border;">
+					<Button styleClass="tableCrudButton" mnemonicParsing="false">
+						<graphic>
+							<FontIcon iconLiteral="fas-plus" iconSize="10" iconColor="DIMGRAY"/>
+						</graphic>
+					</Button>
+					<Button styleClass="tableCrudButton" mnemonicParsing="false">
+						<graphic>
+							<FontIcon iconLiteral="fas-minus" iconSize="10" iconColor="DIMGRAY"/>
+						</graphic>
+					</Button>
+				</HBox>
+				<TableView fx:id="table" prefHeight="200" prefWidth="200" AnchorPane.rightAnchor="5" VBox.vgrow="ALWAYS">
+					<columns>
+						<TableColumn text="Status">
+							<cellValueFactory>
+								<PropertyValueFactory property="status"/>
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn text="Host">
+							<cellValueFactory>
+								<PropertyValueFactory property="host"/>
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn text="Port">
+							<cellValueFactory>
+								<PropertyValueFactory property="port"/>
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn text="Description">
+							<cellValueFactory>
+								<PropertyValueFactory property="Description"/>
+							</cellValueFactory>
+						</TableColumn>
+					</columns>
+				</TableView>
+			</VBox>
 		</VBox>
 	</AnchorPane>
 </Tab>
