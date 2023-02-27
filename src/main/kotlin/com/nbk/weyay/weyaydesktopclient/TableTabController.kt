@@ -82,6 +82,11 @@ class TableTabController() : CoroutineScope, Initializable {
         }
     }
 
+    @FXML
+    private fun removeRows(event: ActionEvent) {
+        table.items.removeAll(table.selectionModel.selectedItems)
+    }
+
     private fun TableView<Destination>.checkSelectedRow() {
         val channel = Channel<Destination>()
         selectionModel.selectedItems.forEach {

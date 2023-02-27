@@ -39,7 +39,7 @@
 								<FontIcon iconLiteral="fas-plus" iconSize="10" iconColor="DIMGRAY"/>
 							</graphic>
 						</Button>
-						<Button styleClass="tableCrudButton" mnemonicParsing="false">
+						<Button styleClass="tableCrudButton" mnemonicParsing="false" onAction="#removeRows">
 							<graphic>
 								<FontIcon iconLiteral="fas-minus" iconSize="10" iconColor="DIMGRAY"/>
 							</graphic>
