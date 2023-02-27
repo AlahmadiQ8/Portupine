@@ -57,8 +57,8 @@
     <AnchorPane VBox.vgrow="ALWAYS">
         <TabPane fx:id="tabsPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         </TabPane>
-        <AnchorPane fx:id="welcomePane" layoutX="10.0" layoutY="10.0" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <VBox alignment="CENTER" prefHeight="500.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <AnchorPane fx:id="welcomePane" layoutX="10.0" layoutY="10.0" minHeight="0.0" minWidth="0.0"  prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox alignment="CENTER"  prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <Label fx:id="welcomeText" alignment="CENTER" prefWidth="350" style="&#10;" text="Open a CSV file containing columns host, port, and description" textAlignment="CENTER" textFill="#9f9f9f" wrapText="true">
                     <font>
                         <Font size="18.0"/>

@@ -57,6 +57,17 @@ class TableTabController() : CoroutineScope, Initializable {
         }
     }
 
+    @FXML
+    private fun addNewRow() {
+        val newDestination = Destination("", 80, "")
+        table.items.add(newDestination)
+        table.selectionModel.apply {
+            clearSelection()
+            select(newDestination)
+        }
+        table.focusModel.focus(table.items.indexOf(newDestination))
+    }
+
     private fun TableView<Destination>.checkSelectedRow() {
         val channel = Channel<Destination>()
         selectionModel.selectedItems.forEach {
