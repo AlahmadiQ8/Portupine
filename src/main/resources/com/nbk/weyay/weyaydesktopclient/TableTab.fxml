@@ -47,7 +47,7 @@
 					</HBox>
 					<TableView editable="true" fx:id="table" prefHeight="200" prefWidth="200" AnchorPane.rightAnchor="5" VBox.vgrow="ALWAYS">
 						<columns>
-							<TableColumn text="Status">
+							<TableColumn text="Status" fx:id="statusTableColumn">
 								<cellValueFactory>
 									<PropertyValueFactory property="status"/>
 								</cellValueFactory>

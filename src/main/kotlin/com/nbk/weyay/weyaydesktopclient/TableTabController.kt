@@ -8,6 +8,7 @@ import javafx.scene.control.SelectionMode
 import javafx.scene.control.TableColumn
 import javafx.scene.control.TableView
 import javafx.scene.control.cell.TextFieldTableCell
+import javafx.util.Callback
 import javafx.util.converter.IntegerStringConverter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,7 @@ import java.net.URL
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
-class TableTabController() : CoroutineScope, Initializable {
+class TableTabController : CoroutineScope, Initializable {
 
     private var job = Job()
 
@@ -33,9 +34,13 @@ class TableTabController() : CoroutineScope, Initializable {
     @FXML
     private lateinit var portTableColumn: TableColumn<TableView<Destination>, Int>
 
+    @FXML
+    private lateinit var statusTableColumn: TableColumn<TableView<Destination>, Status>
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
         portTableColumn.cellFactory = TextFieldTableCell.forTableColumn(IntegerStringConverter())
+        statusTableColumn.cellFactory = Callback { IconCell() }
     }
 
     fun addTableData(items: ObservableList<Destination>) {
