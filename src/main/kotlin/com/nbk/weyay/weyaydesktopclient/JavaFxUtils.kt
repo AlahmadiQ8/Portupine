@@ -3,11 +3,13 @@ package com.nbk.weyay.weyaydesktopclient
 import javafx.beans.property.Property
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Pos
-import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.TableCell
+import javafx.scene.control.TableColumn
 import javafx.scene.control.TableView
 import javafx.scene.layout.HBox
+import javafx.scene.paint.Color
+import javafx.util.Callback
 import org.kordamp.ikonli.javafx.FontIcon
 import kotlin.reflect.KProperty
 
@@ -17,22 +19,17 @@ operator fun <T> Property<T>.setValue(thisRef: Any, property: KProperty<*>, valu
 class IconCell : TableCell<TableView<Destination>, Status>() {
     override fun updateItem(item: Status?, empty: Boolean) {
         super.updateItem(item, empty)
-        graphic = if (!empty) {
-            when (item) {
-                Status.UNREACHABLE -> createPriorityGraphic("fas-step-forward")
-                else  -> createPriorityGraphic("fas-fast-forward")
-            }
-        } else {
-            null
-        }
+        graphic = if (!empty) item?.let { createIconContainer(it) } else null
     }
 
-    private fun createPriorityGraphic(code: String): Node {
-        val graphicContainer = HBox()
-        graphicContainer.alignment = Pos.CENTER
-        val imageView = FontIcon(code)
-        graphicContainer.children.add(imageView)
-        return graphicContainer
+    private fun createIconContainer(item: Status) = HBox().apply {
+        alignment = Pos.CENTER
+        children.add(item.getIcon())
+    }
+
+    companion object {
+        @JvmStatic
+        fun forTableColumn(): Callback<TableColumn<TableView<Destination>, Status>, TableCell<TableView<Destination>, Status>> = Callback { IconCell() }
     }
 }
 
@@ -56,4 +53,11 @@ fun Parent.findNodeBFS(predicate: (c: Parent) -> Boolean): Parent? {
     }
 
     return null
+}
+
+fun Status.getIcon() = when(this) {
+    Status.LOADING -> FontIcon("fas-spinner").apply { iconColor = Color.ORANGE }
+    Status.REACHABLE -> FontIcon("fas-check").apply { iconColor = Color.GREEN }
+    Status.UNREACHABLE -> FontIcon("fas-times").apply { iconColor = Color.RED }
+    else -> FontIcon("fas-question").apply { iconColor = Color.GRAY }
 }

@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
+<?import com.nbk.weyay.weyaydesktopclient.IconCell?>
 <Tab xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.nbk.weyay.weyaydesktopclient.TableTabController">
 	<AnchorPane>
 		<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" AnchorPane.topAnchor="5" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
@@ -47,7 +48,10 @@
 					</HBox>
 					<TableView editable="true" fx:id="table" prefHeight="200" prefWidth="200" AnchorPane.rightAnchor="5" VBox.vgrow="ALWAYS">
 						<columns>
-							<TableColumn text="Status" fx:id="statusTableColumn">
+							<TableColumn text="Status">
+								<cellFactory>
+									<IconCell fx:factory="forTableColumn"/>
+								</cellFactory>
 								<cellValueFactory>
 									<PropertyValueFactory property="status"/>
 								</cellValueFactory>
