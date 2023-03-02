@@ -15,6 +15,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.javafx.JavaFx
+import java.awt.Desktop
 import java.io.File
 import java.io.FileReader
 import java.net.URL
@@ -116,6 +117,11 @@ class MainController : CoroutineScope, Initializable {
             tabsPane.selectionModel.select(newTab)
             newTabController.addTableData(tableData)
         }
+    }
+
+    @FXML
+    fun goToProjectHomepage() {
+        Desktop.getDesktop().browse(URL("https://github.com/AlahmadiQ8/Portupine").toURI())
     }
 
     private fun loadNewTableTab(): Pair<Tab, TableTabController> {

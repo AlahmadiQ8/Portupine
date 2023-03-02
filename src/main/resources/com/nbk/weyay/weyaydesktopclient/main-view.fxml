@@ -51,7 +51,7 @@
             <MenuItem mnemonicParsing="false" text="Quit" />
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
-            <MenuItem mnemonicParsing="false" text="About Portupine" />
+            <MenuItem mnemonicParsing="false" text="About Portupine" onAction="#goToProjectHomepage" />
         </Menu>
     </MenuBar>
     <AnchorPane VBox.vgrow="ALWAYS">
