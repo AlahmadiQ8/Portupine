@@ -3,6 +3,7 @@
 package com.nbk.weyay.weyaydesktopclient
 
 import javafx.collections.FXCollections
+import javafx.event.ActionEvent
 import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.fxml.FXML
@@ -11,6 +12,7 @@ import javafx.fxml.Initializable
 import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.stage.FileChooser
+import javafx.stage.Stage
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
@@ -43,6 +45,7 @@ class MainController : CoroutineScope, Initializable {
 
     @FXML
     private lateinit var welcomePane: AnchorPane
+
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         println("initialized")
@@ -122,6 +125,11 @@ class MainController : CoroutineScope, Initializable {
     @FXML
     fun goToProjectHomepage() {
         Desktop.getDesktop().browse(URL("https://github.com/AlahmadiQ8/Portupine").toURI())
+    }
+
+    @FXML
+    fun closeApplication(event: ActionEvent) {
+        ((event.source as MenuItem).parentPopup.ownerWindow.scene.window as Stage).close()
     }
 
     private fun loadNewTableTab(): Pair<Tab, TableTabController> {
