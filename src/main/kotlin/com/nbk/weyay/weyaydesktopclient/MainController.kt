@@ -14,8 +14,6 @@ import javafx.scene.layout.*
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.javafx.JavaFx
 import java.awt.Desktop
 import java.io.File
@@ -147,22 +145,4 @@ class MainController : CoroutineScope, Initializable {
         }
     }
 
-    /**
-     * Example on how to use coroutines in javadfx
-     * Not currently used
-     */
-    @Suppress("unused")
-    private fun exampleCoroutine() {
-        val destination = Destination("google.com", 443, "testing")
-        launch {
-            statusLabel.text = "Checking ${destination.host}:${destination.port}"
-            destination.status = Status.LOADING
-            val statusProducer = produce { send(checkReachability(destination)) }
-            statusProducer.consumeEach {
-                statusLabel.text = "${destination.host}:${destination.port} is $it"
-//                destination.status = if (it) Status.REACHABLE else Status.UNREACHABLE
-                println(destination.status.text + destination.description)
-            }
-        }
-    }
 }

@@ -5,15 +5,20 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 
 class Destination(host: String, port: Int, description: String) {
+
+    @get:JvmName("hostProperty")
     val hostProperty = SimpleStringProperty(host)
     var host by hostProperty
 
+    @get:JvmName("portProperty")
     val portProperty = SimpleIntegerProperty(port)
     var port by portProperty
 
+    @get:JvmName("descriptionProperty")
     val descriptionProperty = SimpleStringProperty(description)
     val description by descriptionProperty
 
+    @get:JvmName("statusProperty")
     val statusProperty = SimpleObjectProperty(Status.UNKNOWN)
     var status by statusProperty
 
@@ -22,9 +27,9 @@ class Destination(host: String, port: Int, description: String) {
     }
 }
 
-enum class Status(val text: String) {
-    REACHABLE("Reachable"),
-    UNREACHABLE("Unreachable"),
-    UNKNOWN("Unknown"),
-    LOADING("Checking")
+enum class Status {
+    REACHABLE,
+    UNREACHABLE,
+    UNKNOWN,
+    LOADING
 }

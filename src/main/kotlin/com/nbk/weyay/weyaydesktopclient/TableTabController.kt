@@ -12,8 +12,6 @@ import javafx.util.converter.IntegerStringConverter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
 import java.net.URL
@@ -44,24 +42,12 @@ class TableTabController : CoroutineScope, Initializable {
 
     @FXML
     private fun onCheckSelected(event: ActionEvent) {
-        table.checkSelectedRow()
+        table.selectionModel.selectedItems.checkReachability()
     }
 
     @FXML
     private fun checkAllRows() {
-        val channel = Channel<Destination>()
-        table.items.forEach {
-            launch {
-                it.status = Status.LOADING
-                table.items[table.items.indexOf(it)] = it
-                channel.send(checkReachability(it))
-            }
-        }
-        launch {
-            channel.consumeEach {
-                table.items[table.items.indexOf(it)] = it
-            }
-        }
+        table.items.checkReachability()
     }
 
     @FXML
@@ -87,18 +73,11 @@ class TableTabController : CoroutineScope, Initializable {
         table.items.removeAll(table.selectionModel.selectedItems)
     }
 
-    private fun TableView<Destination>.checkSelectedRow() {
-        val channel = Channel<Destination>()
-        selectionModel.selectedItems.forEach {
+    private fun ObservableList<Destination>.checkReachability() {
+        forEach {
             launch {
                 it.status = Status.LOADING
-                items[items.indexOf(it)] = it
-                channel.send(checkReachability(it))
-            }
-        }
-        launch {
-            channel.consumeEach {
-                items[items.indexOf(it)] = it
+                it.status = if (it.isReachable()) Status.REACHABLE else Status.UNREACHABLE
             }
         }
     }

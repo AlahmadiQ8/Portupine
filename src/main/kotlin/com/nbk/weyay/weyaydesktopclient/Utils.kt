@@ -9,18 +9,17 @@ import java.util.Random
 
 const val TIMEOUT_MS = 3000
 
-suspend fun checkReachability(destination: Destination): Destination {
+suspend fun Destination.isReachable(): Boolean {
     val randomGenerator = Random()
     val duration = randomGenerator.nextInt(1000, 3000)
     delay(duration.toLong())
     Socket().use {
         try {
-            it.connect(InetSocketAddress(destination.host, destination.port.toInt()), TIMEOUT_MS)
-            destination.status = Status.REACHABLE
+            it.connect(InetSocketAddress(host, port.toInt()), TIMEOUT_MS)
+            return true
         } catch (e: IOException) {
-            destination.status = Status.UNREACHABLE
+            return false
         }
-        return destination
     }
 }
 
