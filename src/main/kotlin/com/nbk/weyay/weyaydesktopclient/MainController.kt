@@ -45,8 +45,18 @@ class MainController : CoroutineScope, Initializable {
     @FXML
     private lateinit var welcomePane: AnchorPane
 
+    @FXML
+    private lateinit var saveButton: MenuItem
+
+    @FXML
+    private lateinit var saveAsButton: MenuItem
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         statusLabel.text = VERSION
+        tabsPane.selectionModel.selectedItemProperty().addListener { _, _, newTab ->
+            saveButton.isDisable = newTab?.userData == null
+            saveAsButton.isDisable = newTab?.userData == null
+        }
     }
 
     @FXML
@@ -72,17 +82,15 @@ class MainController : CoroutineScope, Initializable {
                         }
                     }
 
-                launch {
-                    newTab.apply {
-                        text = file.nameWithoutExtension
-                        onClosed = onClosedTabHandler()
-                        userData = newTabController
-                    }
-                    tabsPane.tabs.add(newTab)
-                    welcomePane.isVisible = false
-                    tabsPane.selectionModel.select(newTab)
-                    newTabController.addTableData(data)
+                newTab.apply {
+                    text = file.nameWithoutExtension
+                    onClosed = onClosedTabHandler()
+                    userData = newTabController
                 }
+                tabsPane.tabs.add(newTab)
+                welcomePane.isVisible = false
+                tabsPane.selectionModel.select(newTab)
+                newTabController.addTableData(data)
             }
         }
     }

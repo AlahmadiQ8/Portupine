@@ -1,7 +1,6 @@
 package com.nbk.weyay.weyaydesktopclient
 
 import javafx.collections.ObservableList
-import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.SelectionMode
@@ -59,7 +58,7 @@ class TableTabController : CoroutineScope, Initializable {
     }
 
     @FXML
-    private fun onCheckSelected(event: ActionEvent) {
+    private fun onCheckSelected() {
         table.selectionModel.selectedItems.checkReachability()
     }
 
@@ -87,7 +86,7 @@ class TableTabController : CoroutineScope, Initializable {
     }
 
     @FXML
-    private fun removeRows(event: ActionEvent) {
+    private fun removeRows() {
         table.items.removeAll(table.selectionModel.selectedItems)
     }
 
