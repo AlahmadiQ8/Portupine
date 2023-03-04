@@ -43,6 +43,18 @@ class TableTabController : CoroutineScope, Initializable {
         table.items = items
     }
 
+    fun saveFile(): Boolean {
+        return currentFile?.let {
+            it.printWriter().use { out ->
+                out.println("host,port,description")
+                table.items.forEach {
+                    out.println("${it.host},${it.port},${it.description}")
+                }
+            }
+            true
+        } ?: false
+    }
+
     @FXML
     private fun onCheckSelected(event: ActionEvent) {
         table.selectionModel.selectedItems.checkReachability()

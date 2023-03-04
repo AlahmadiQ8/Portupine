@@ -88,9 +88,10 @@ class MainController : CoroutineScope, Initializable {
 
     @FXML
     private fun save() {
-        println("saved")
-        val currentTab = tabsPane.selectionModel.selectedItem.userData as TableTabController?
-        println(currentTab?.currentFile?.nameWithoutExtension)
+        val currentTabController = tabsPane.selectionModel.selectedItem.userData as TableTabController
+        if (currentTabController.saveFile()) {
+            tabsPane.selectionModel.selectedItem.text = currentTabController.currentFile!!.nameWithoutExtension
+        }
     }
 
     @FXML
