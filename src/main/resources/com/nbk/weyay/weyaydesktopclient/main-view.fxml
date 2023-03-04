@@ -41,12 +41,12 @@
         <Menu mnemonicParsing="false" text="File">
             <MenuItem mnemonicParsing="false" text="New" />
             <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open…" />
-            <Menu mnemonicParsing="false" text="Open Recent" />
+            <Menu mnemonicParsing="false" text="Open Recent" disable="true" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Save" />
             <MenuItem mnemonicParsing="false" text="Save As…" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
+            <MenuItem mnemonicParsing="false" text="Preferences…" disable="true" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Quit" onAction="#closeApplication" />
         </Menu>

@@ -2,6 +2,8 @@ package com.nbk.weyay.weyaydesktopclient
 
 import javafx.beans.property.Property
 import javafx.beans.value.ObservableValue
+import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.TableCell
@@ -60,4 +62,9 @@ fun Status.getIcon() = when(this) {
     Status.REACHABLE -> FontIcon("fas-check").apply { iconColor = Color.GREEN }
     Status.UNREACHABLE -> FontIcon("fas-times").apply { iconColor = Color.RED }
     else -> FontIcon("fas-question").apply { iconColor = Color.GRAY }
+}
+
+fun ObservableList<Destination>.addChangeListener(change: ListChangeListener.Change<out Destination>.() -> Unit): ObservableList<Destination> {
+    this.addListener(ListChangeListener(change))
+    return this
 }

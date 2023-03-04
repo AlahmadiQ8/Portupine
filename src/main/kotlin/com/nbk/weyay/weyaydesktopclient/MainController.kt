@@ -3,7 +3,6 @@
 package com.nbk.weyay.weyaydesktopclient
 
 import javafx.collections.FXCollections
-import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.event.Event
@@ -24,8 +23,8 @@ import java.net.URL
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
+const val VERSION = "v0.0.1"
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("OPT_IN_USAGE")
 class MainController : CoroutineScope, Initializable {
 
@@ -46,11 +45,9 @@ class MainController : CoroutineScope, Initializable {
     @FXML
     private lateinit var welcomePane: AnchorPane
 
-
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        println("initialized")
+        statusLabel.text = VERSION
     }
-
     @FXML
     private fun openFile() {
         val fileChooser = FileChooser()
@@ -62,12 +59,16 @@ class MainController : CoroutineScope, Initializable {
             println(context.toString())
         }
         launch(errorHandler) {
+            val (newTab, newTabController) = loadNewTableTab()
             file?.run {
                 val data = FileReader(this)
                     .readCsv(setOf("host", "port", "description"))
-                    .toObservableList()!!
-
-                val (newTab, newTabController) = loadNewTableTab()
+                    .toObservableList()
+                    .addChangeListener {
+                        while (next()) {
+                            newTab.text = file.nameWithoutExtension + "*"
+                        }
+                    }
 
                 launch {
                     newTab.apply {
@@ -85,13 +86,17 @@ class MainController : CoroutineScope, Initializable {
 
     @FXML
     private fun loadExample() {
+        val (newTab, newTabController) = loadNewTableTab()
         val data = MainController::class.java.getResourceAsStream("example.csv")
             ?.reader()
             ?.readCsv(setOf("host", "port", "description"))
             ?.toObservableList()
+            ?.addChangeListener {
+                while (next()) {
+                    newTab.text = "example.csv*"
+                }
+            }
             ?: error("Cannot open/find the file")
-
-        val (newTab, newTabController) = loadNewTableTab()
 
         launch {
             newTab.apply {
@@ -130,7 +135,7 @@ class MainController : CoroutineScope, Initializable {
         }
     }
 
-    private fun List<HashMap<String, String>>.toObservableList(): ObservableList<Destination>? {
+    private fun List<HashMap<String, String>>.toObservableList(): ObservableList<Destination> {
         val tableData = FXCollections.observableArrayList<Destination> { d ->
             arrayOf(
                 d.hostProperty,
@@ -146,14 +151,6 @@ class MainController : CoroutineScope, Initializable {
             )
             tableData.add(destination)
         }
-        tableData.addListener(ListChangeListener { e ->
-            while (e.next()) {
-                if (e.wasUpdated()) println("wasUpdated")
-                if (e.wasAdded()) println("wasAdded")
-                if (e.wasRemoved()) println("wasRemoved")
-            }
-        })
         return tableData
     }
-
 }
