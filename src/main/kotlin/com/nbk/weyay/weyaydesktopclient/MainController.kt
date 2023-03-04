@@ -96,6 +96,11 @@ class MainController : CoroutineScope, Initializable {
     }
 
     @FXML
+    private fun new() {
+        saveAs(emptyList())
+    }
+
+    @FXML
     private fun save() {
         val currentTabController = tabsPane.selectionModel.selectedItem.userData as TableTabController
         launch {
@@ -107,12 +112,15 @@ class MainController : CoroutineScope, Initializable {
 
     @FXML
     private fun saveAs() {
+        saveAs((tabsPane.selectionModel.selectedItem.userData as TableTabController).items)
+    }
+
+    private fun saveAs(items: Collection<Destination>) {
         println("saveAs")
         val fileChooser = FileChooser()
         fileChooser.title = "Save"
         fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("CSV Files", "*.csv"))
         val file: File? = fileChooser.showSaveDialog(null)
-        val currentTabController = tabsPane.selectionModel.selectedItem.userData as TableTabController
 
         launch {
             val (newTab, newTabController) = loadNewTableTab()
@@ -125,7 +133,7 @@ class MainController : CoroutineScope, Initializable {
                         d.descriptionProperty,
                     )
                 }.apply {
-                    addAll(currentTabController.items)
+                    addAll(items)
                     addChangeListener {
                         while (next()) {
                             newTab.text = file.nameWithoutExtension + "*"
