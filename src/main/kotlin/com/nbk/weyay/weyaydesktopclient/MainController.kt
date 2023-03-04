@@ -48,6 +48,7 @@ class MainController : CoroutineScope, Initializable {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         statusLabel.text = VERSION
     }
+
     @FXML
     private fun openFile() {
         val fileChooser = FileChooser()
@@ -89,8 +90,54 @@ class MainController : CoroutineScope, Initializable {
     @FXML
     private fun save() {
         val currentTabController = tabsPane.selectionModel.selectedItem.userData as TableTabController
-        if (currentTabController.saveFile()) {
-            tabsPane.selectionModel.selectedItem.text = currentTabController.currentFile!!.nameWithoutExtension
+        launch {
+            if (currentTabController.saveFile()) {
+                tabsPane.selectionModel.selectedItem.text = currentTabController.currentFile!!.nameWithoutExtension
+            }
+        }
+    }
+
+    @FXML
+    private fun saveAs() {
+        println("saveAs")
+        val fileChooser = FileChooser()
+        fileChooser.title = "Save"
+        fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("CSV Files", "*.csv"))
+        val file: File? = fileChooser.showSaveDialog(null)
+        val currentTabController = tabsPane.selectionModel.selectedItem.userData as TableTabController
+
+        launch {
+            val (newTab, newTabController) = loadNewTableTab()
+            file?.run {
+                newTabController.currentFile = this
+                val data = FXCollections.observableArrayList<Destination> { d ->
+                    arrayOf(
+                        d.hostProperty,
+                        d.portProperty,
+                        d.descriptionProperty,
+                    )
+                }.apply {
+                    addAll(currentTabController.items)
+                    addChangeListener {
+                        while (next()) {
+                            newTab.text = file.nameWithoutExtension + "*"
+                        }
+                    }
+                }
+
+                newTab.apply {
+                    text = file.nameWithoutExtension
+                    onClosed = onClosedTabHandler()
+                    userData = newTabController
+                }
+                tabsPane.tabs.add(newTab)
+                welcomePane.isVisible = false
+                tabsPane.selectionModel.select(newTab)
+                newTabController.addTableData(data)
+                if (!newTabController.saveFile()) {
+                    error("Unexpected error saving file")
+                }
+            }
         }
     }
 

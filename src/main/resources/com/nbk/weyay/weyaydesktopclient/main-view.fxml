@@ -44,7 +44,7 @@
             <Menu mnemonicParsing="false" text="Open Recent" disable="true" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Save" onAction="#save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
+            <MenuItem mnemonicParsing="false" text="Save As…" onAction="#saveAs" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Preferences…" disable="true" />
             <SeparatorMenuItem mnemonicParsing="false" />

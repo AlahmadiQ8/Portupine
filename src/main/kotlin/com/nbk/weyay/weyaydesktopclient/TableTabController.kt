@@ -34,12 +34,15 @@ class TableTabController : CoroutineScope, Initializable {
 
     var currentFile: File? = null
 
+    lateinit var items: ObservableList<Destination>
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE
         portTableColumn.cellFactory = TextFieldTableCell.forTableColumn(IntegerStringConverter())
     }
 
     fun addTableData(items: ObservableList<Destination>) {
+        this.items = items
         table.items = items
     }
 
