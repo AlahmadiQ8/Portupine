@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
+import java.io.File
 import java.net.URL
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -30,6 +31,8 @@ class TableTabController : CoroutineScope, Initializable {
 
     @FXML
     private lateinit var portTableColumn: TableColumn<TableView<Destination>, Int>
+
+    var currentFile: File? = null
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         table.selectionModel.selectionMode = SelectionMode.MULTIPLE

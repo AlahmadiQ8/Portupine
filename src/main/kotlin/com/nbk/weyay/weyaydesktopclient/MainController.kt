@@ -61,6 +61,7 @@ class MainController : CoroutineScope, Initializable {
         launch(errorHandler) {
             val (newTab, newTabController) = loadNewTableTab()
             file?.run {
+                newTabController.currentFile = this
                 val data = FileReader(this)
                     .readCsv(setOf("host", "port", "description"))
                     .toObservableList()
@@ -74,6 +75,7 @@ class MainController : CoroutineScope, Initializable {
                     newTab.apply {
                         text = file.nameWithoutExtension
                         onClosed = onClosedTabHandler()
+                        userData = newTabController
                     }
                     tabsPane.tabs.add(newTab)
                     welcomePane.isVisible = false
@@ -82,6 +84,13 @@ class MainController : CoroutineScope, Initializable {
                 }
             }
         }
+    }
+
+    @FXML
+    private fun save() {
+        println("saved")
+        val currentTab = tabsPane.selectionModel.selectedItem.userData as TableTabController?
+        println(currentTab?.currentFile?.nameWithoutExtension)
     }
 
     @FXML
@@ -102,6 +111,7 @@ class MainController : CoroutineScope, Initializable {
             newTab.apply {
                 text = "example.csv"
                 onClosed = onClosedTabHandler()
+                userData = newTabController
             }
             tabsPane.tabs.add(newTab)
             welcomePane.isVisible = false
