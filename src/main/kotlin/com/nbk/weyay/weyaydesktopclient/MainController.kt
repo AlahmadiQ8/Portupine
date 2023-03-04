@@ -3,6 +3,8 @@
 package com.nbk.weyay.weyaydesktopclient
 
 import javafx.collections.FXCollections
+import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.event.Event
 import javafx.event.EventHandler
@@ -61,18 +63,9 @@ class MainController : CoroutineScope, Initializable {
         }
         launch(errorHandler) {
             file?.run {
-                val data = FileReader(this).readCsv(setOf("host", "port", "description"))
-                val tableData = FXCollections.observableArrayList<Destination>()
-                // TODO: catch NumberFormatException for toInt
-                data.forEach {
-                    val destination = Destination(
-                        it.getValue("host"),
-                        it.getValue("port").toInt(),
-                        it.getValue("description")
-                    )
-                    println(destination)
-                    tableData.add(destination)
-                }
+                val data = FileReader(this)
+                    .readCsv(setOf("host", "port", "description"))
+                    .toObservableList()!!
 
                 val (newTab, newTabController) = loadNewTableTab()
 
@@ -84,7 +77,7 @@ class MainController : CoroutineScope, Initializable {
                     tabsPane.tabs.add(newTab)
                     welcomePane.isVisible = false
                     tabsPane.selectionModel.select(newTab)
-                    newTabController.addTableData(tableData)
+                    newTabController.addTableData(data)
                 }
             }
         }
@@ -95,16 +88,8 @@ class MainController : CoroutineScope, Initializable {
         val data = MainController::class.java.getResourceAsStream("example.csv")
             ?.reader()
             ?.readCsv(setOf("host", "port", "description"))
+            ?.toObservableList()
             ?: error("Cannot open/find the file")
-        val tableData = FXCollections.observableArrayList<Destination>()
-        data.forEach {
-            val destination = Destination(
-                it.getValue("host"),
-                it.getValue("port").toInt(),
-                it.getValue("description")
-            )
-            tableData.add(destination)
-        }
 
         val (newTab, newTabController) = loadNewTableTab()
 
@@ -116,7 +101,7 @@ class MainController : CoroutineScope, Initializable {
             tabsPane.tabs.add(newTab)
             welcomePane.isVisible = false
             tabsPane.selectionModel.select(newTab)
-            newTabController.addTableData(tableData)
+            newTabController.addTableData(data)
         }
     }
 
@@ -143,6 +128,32 @@ class MainController : CoroutineScope, Initializable {
                 welcomePane.isVisible = true
             }
         }
+    }
+
+    private fun List<HashMap<String, String>>.toObservableList(): ObservableList<Destination>? {
+        val tableData = FXCollections.observableArrayList<Destination> { d ->
+            arrayOf(
+                d.hostProperty,
+                d.portProperty,
+                d.descriptionProperty,
+            )
+        }
+        forEach {
+            val destination = Destination(
+                it.getValue("host"),
+                it.getValue("port").toInt(),
+                it.getValue("description")
+            )
+            tableData.add(destination)
+        }
+        tableData.addListener(ListChangeListener { e ->
+            while (e.next()) {
+                if (e.wasUpdated()) println("wasUpdated")
+                if (e.wasAdded()) println("wasAdded")
+                if (e.wasRemoved()) println("wasRemoved")
+            }
+        })
+        return tableData
     }
 
 }

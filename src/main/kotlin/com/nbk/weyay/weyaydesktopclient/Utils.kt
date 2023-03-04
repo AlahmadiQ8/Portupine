@@ -1,18 +1,13 @@
 package com.nbk.weyay.weyaydesktopclient
 
-import kotlinx.coroutines.delay
 import java.io.File
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.util.Random
 
 const val TIMEOUT_MS = 3000
 
-suspend fun Destination.isReachable(): Boolean {
-    val randomGenerator = Random()
-    val duration = randomGenerator.nextInt(1000, 3000)
-    delay(duration.toLong())
+fun Destination.isReachable(): Boolean {
     Socket().use {
         try {
             it.connect(InetSocketAddress(host, port.toInt()), TIMEOUT_MS)
