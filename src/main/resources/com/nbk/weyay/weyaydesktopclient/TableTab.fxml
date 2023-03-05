@@ -74,7 +74,7 @@
 									<TextFieldTableCell fx:factory="forTableColumn"/>
 								</cellFactory>
 								<cellValueFactory>
-									<PropertyValueFactory property="Description"/>
+									<PropertyValueFactory property="description"/>
 								</cellValueFactory>
 							</TableColumn>
 						</columns>

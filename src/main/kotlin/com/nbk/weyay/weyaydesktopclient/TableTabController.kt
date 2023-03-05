@@ -92,7 +92,7 @@ class TableTabController : CoroutineScope, Initializable {
 
     private fun ObservableList<Destination>.checkReachability() {
         forEach {
-            launch {
+            launch(Dispatchers.Default) {
                 it.status = Status.LOADING
                 it.status = if (it.isReachable()) Status.REACHABLE else Status.UNREACHABLE
             }

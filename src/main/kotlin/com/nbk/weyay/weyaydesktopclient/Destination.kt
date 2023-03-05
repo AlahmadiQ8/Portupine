@@ -16,7 +16,7 @@ class Destination(host: String, port: Int, description: String) {
 
     @get:JvmName("descriptionProperty")
     val descriptionProperty = SimpleStringProperty(description)
-    val description by descriptionProperty
+    var description by descriptionProperty
 
     @get:JvmName("statusProperty")
     val statusProperty = SimpleObjectProperty(Status.UNKNOWN)
