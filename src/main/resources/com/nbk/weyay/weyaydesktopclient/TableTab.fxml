@@ -24,11 +24,17 @@
 						<graphic>
 							<FontIcon iconLiteral="fas-step-forward" iconSize="15" iconColor="green"/>
 						</graphic>
+						<tooltip>
+							<Tooltip text="Check selected" />
+						</tooltip>
 					</Button>
 					<Button mnemonicParsing="false" onAction="#checkAllRows" GridPane.columnIndex="1">
 						<graphic>
 							<FontIcon iconLiteral="fas-fast-forward" iconSize="15" iconColor="green"/>
 						</graphic>
+						<tooltip>
+							<Tooltip text="Check all" />
+						</tooltip>
 					</Button>
 				</GridPane>
 			</top>
@@ -39,11 +45,17 @@
 							<graphic>
 								<FontIcon iconLiteral="fas-plus" iconSize="10" iconColor="DIMGRAY"/>
 							</graphic>
+							<tooltip>
+								<Tooltip text="Add new row" />
+							</tooltip>
 						</Button>
 						<Button styleClass="tableCrudButton" mnemonicParsing="false" onAction="#removeRows">
 							<graphic>
 								<FontIcon iconLiteral="fas-minus" iconSize="10" iconColor="DIMGRAY"/>
 							</graphic>
+							<tooltip>
+								<Tooltip text="Delete selected rows" />
+							</tooltip>
 						</Button>
 					</HBox>
 					<TableView editable="true" fx:id="table" prefHeight="200" prefWidth="200" AnchorPane.rightAnchor="5" VBox.vgrow="ALWAYS">
