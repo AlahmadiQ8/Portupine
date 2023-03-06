@@ -25,7 +25,7 @@ import java.nio.file.Path
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
-const val VERSION = "v0.0.1"
+const val VERSION = "v0.0.3-beta"
 
 @Suppress("OPT_IN_USAGE")
 class MainController : CoroutineScope, Initializable {
