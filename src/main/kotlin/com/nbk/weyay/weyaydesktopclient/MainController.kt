@@ -2,6 +2,7 @@
 
 package com.nbk.weyay.weyaydesktopclient
 
+import javafx.beans.binding.Bindings
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.event.ActionEvent
@@ -20,6 +21,7 @@ import java.awt.Desktop
 import java.io.File
 import java.io.FileReader
 import java.net.URL
+import java.nio.file.Path
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
@@ -51,12 +53,37 @@ class MainController : CoroutineScope, Initializable {
     @FXML
     private lateinit var saveAsButton: MenuItem
 
+    @FXML
+    private lateinit var recentFilesContainer: VBox
+
+    @FXML
+    private lateinit var recentFilesMenu: Menu
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         statusLabel.text = VERSION
         tabsPane.selectionModel.selectedItemProperty().addListener { _, _, newTab ->
             saveButton.isDisable = newTab?.userData == null
             saveAsButton.isDisable = newTab?.userData == null
         }
+        NodeFactory(recentFilesContainer.children, RecentFiles.recentItems) { path ->
+            val pathParsed = Path.of(path)
+            Hyperlink(pathParsed.fileName.toString()).apply {
+                setOnAction {
+                    openFile(Path.of(path).toFile())
+                }
+            }
+        }
+
+        NodeFactory(recentFilesMenu.items, RecentFiles.recentItems) { path ->
+            val pathParsed = Path.of(path)
+            MenuItem(pathParsed.fileName.toString()).apply {
+                setOnAction {
+                    openFile(Path.of(path).toFile())
+                }
+            }
+        }
+
+        recentFilesMenu.disableProperty().bind(Bindings.isEmpty(RecentFiles.recentItems))
     }
 
     @FXML
@@ -65,6 +92,10 @@ class MainController : CoroutineScope, Initializable {
         fileChooser.title = "Select File"
         fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("CSV Files", "*.csv"))
         val file: File? = fileChooser.showOpenDialog(null)
+        openFile(file)
+    }
+
+    private fun openFile(file: File?) {
         val errorHandler = CoroutineExceptionHandler { context, exception ->
             println(exception.message)
             println(context.toString())
@@ -72,6 +103,7 @@ class MainController : CoroutineScope, Initializable {
         launch(errorHandler) {
             val (newTab, newTabController) = loadNewTableTab()
             file?.run {
+                RecentFiles.addRecentFile(file.absolutePath)
                 newTabController.currentFile = this
                 val data = FileReader(this)
                     .readCsv(setOf("host", "port", "description"))
