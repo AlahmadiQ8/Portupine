@@ -2,6 +2,7 @@
 
 package com.nbk.weyay.weyaydesktopclient
 
+import javafx.beans.binding.Bindings
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.event.ActionEvent
@@ -55,7 +56,8 @@ class MainController : CoroutineScope, Initializable {
     @FXML
     private lateinit var recentFilesContainer: VBox
 
-    private lateinit var recentFilesFactory: NodeFactory<String>
+    @FXML
+    private lateinit var recentFilesMenu: Menu
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         statusLabel.text = VERSION
@@ -63,7 +65,7 @@ class MainController : CoroutineScope, Initializable {
             saveButton.isDisable = newTab?.userData == null
             saveAsButton.isDisable = newTab?.userData == null
         }
-        recentFilesFactory = NodeFactory(recentFilesContainer.children, RecentFiles.recentItems) { path ->
+        NodeFactory(recentFilesContainer.children, RecentFiles.recentItems) { path ->
             val pathParsed = Path.of(path)
             Hyperlink(pathParsed.fileName.toString()).apply {
                 setOnAction {
@@ -71,6 +73,17 @@ class MainController : CoroutineScope, Initializable {
                 }
             }
         }
+
+        NodeFactory(recentFilesMenu.items, RecentFiles.recentItems) { path ->
+            val pathParsed = Path.of(path)
+            MenuItem(pathParsed.fileName.toString()).apply {
+                setOnAction {
+                    openFile(Path.of(path).toFile())
+                }
+            }
+        }
+
+        recentFilesMenu.disableProperty().bind(Bindings.isEmpty(RecentFiles.recentItems))
     }
 
     @FXML

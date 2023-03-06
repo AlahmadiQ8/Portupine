@@ -41,7 +41,7 @@
         <Menu mnemonicParsing="false" text="File">
             <MenuItem mnemonicParsing="false" text="New" onAction="#new" />
             <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open…" />
-            <Menu mnemonicParsing="false" text="Open Recent" disable="true" />
+            <Menu fx:id="recentFilesMenu" mnemonicParsing="false" text="Open Recent" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="saveButton" mnemonicParsing="false" text="Save" onAction="#save" disable="true" />
             <MenuItem fx:id="saveAsButton" mnemonicParsing="false" text="Save As…" onAction="#saveAs" disable="true" />

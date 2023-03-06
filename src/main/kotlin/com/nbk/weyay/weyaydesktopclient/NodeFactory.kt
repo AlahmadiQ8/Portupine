@@ -2,21 +2,20 @@ package com.nbk.weyay.weyaydesktopclient
 
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
-import javafx.scene.Node
 
-class NodeFactory<T>(
-    private val nodes: ObservableList<Node>,
+class NodeFactory<T, R>(
+    private val nodes: ObservableList<R>,
     private val data: ObservableList<T>,
-    private val buildNodeFor: (model: T) -> Node
+    private val buildNodeFor: (model: T) -> R
 ) {
     init {
         data.addListener(ListChangeListener { ch ->
             while (ch.next()) {
                 if (ch.wasPermutated()) {
-                    val permutedNodes = mutableListOf<Node>()
+                    val permutedNodes = mutableListOf<R>()
                     for (oldIndex in (ch.from until ch.to)) {
                         val newIndex = ch.getPermutation(oldIndex)
-                        permutedNodes.add(newIndex - ch.from, nodes.get(oldIndex))
+                        permutedNodes.add(newIndex - ch.from, nodes[oldIndex])
                     }
                     nodes.remove(ch.from, ch.to)
                     nodes.addAll(ch.from, permutedNodes)
@@ -36,7 +35,7 @@ class NodeFactory<T>(
         rebuildAllNodes()
     }
 
-    private fun buildNodesFor(dataIn: List<T>): List<Node> {
+    private fun buildNodesFor(dataIn: List<T>): List<R> {
         return dataIn.fold(mutableListOf()) { list, d ->
             list.add(buildNodeFor(d))
             list
