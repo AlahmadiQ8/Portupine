@@ -8,6 +8,7 @@ module com.nbk.weyay.weyaydesktopclient {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.ikonli.fontawesome5;
     requires java.desktop;
+    requires java.prefs;
 
     opens com.nbk.weyay.weyaydesktopclient to javafx.fxml;
     exports com.nbk.weyay.weyaydesktopclient;
