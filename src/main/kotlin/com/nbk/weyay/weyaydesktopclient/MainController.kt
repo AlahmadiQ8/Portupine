@@ -27,7 +27,7 @@ import java.nio.file.Path
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
-const val VERSION = "v0.0.3-beta"
+const val VERSION = "v0.0.4-beta"
 
 @Suppress("OPT_IN_USAGE")
 class MainController : CoroutineScope, Initializable {
@@ -177,6 +177,7 @@ class MainController : CoroutineScope, Initializable {
         launch {
             val (newTab, newTabController) = loadNewTableTab()
             file?.run {
+                RecentFiles.addRecentFile(file.absolutePath)
                 newTabController.currentFile = this
                 val data = FXCollections.observableArrayList<Destination> { d ->
                     arrayOf(
