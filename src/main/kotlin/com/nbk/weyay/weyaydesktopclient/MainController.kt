@@ -13,10 +13,12 @@ import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.control.*
 import javafx.scene.layout.*
+import javafx.scene.paint.Color
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
+import org.kordamp.ikonli.javafx.FontIcon
 import java.awt.Desktop
 import java.io.File
 import java.io.FileReader
@@ -59,6 +61,9 @@ class MainController : CoroutineScope, Initializable {
     @FXML
     private lateinit var recentFilesMenu: Menu
 
+    @FXML
+    private lateinit var recentFilesLabel: Label
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         statusLabel.text = VERSION
         tabsPane.selectionModel.selectedItemProperty().addListener { _, _, newTab ->
@@ -67,9 +72,18 @@ class MainController : CoroutineScope, Initializable {
         }
         NodeFactory(recentFilesContainer.children, RecentFiles.recentItems) { path ->
             val pathParsed = Path.of(path)
-            Hyperlink(pathParsed.fileName.toString()).apply {
-                setOnAction {
-                    openFile(Path.of(path).toFile())
+            BorderPane().apply {
+                left = Hyperlink(pathParsed.fileName.toString()).apply {
+                    setOnAction {
+                        openFile(Path.of(path).toFile())
+                    }
+
+                }
+                right = Hyperlink().apply {
+                    graphic = FontIcon("fas-times").apply { iconColor = Color.gray(0.0, 0.25) }
+                    setOnAction {
+                        RecentFiles.removeRecentFile(path)
+                    }
                 }
             }
         }
@@ -84,6 +98,12 @@ class MainController : CoroutineScope, Initializable {
         }
 
         recentFilesMenu.disableProperty().bind(Bindings.isEmpty(RecentFiles.recentItems))
+        recentFilesLabel.textProperty().bind(
+            Bindings
+                .`when`(Bindings.isEmpty(RecentFiles.recentItems))
+                .then("")
+                .otherwise("Recent Files")
+        )
     }
 
     @FXML

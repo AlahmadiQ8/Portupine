@@ -68,7 +68,7 @@
                     <Button mnemonicParsing="false" onAction="#openFile" text="Open File"/>
                     <Button mnemonicParsing="false" onAction="#loadExample" text="Load example"/>
                 </HBox>
-                <Label maxWidth="100" alignment="TOP_LEFT" prefWidth="350" style="&#10;" text="Recent files" textAlignment="CENTER" textFill="#9f9f9f" wrapText="true">
+                <Label fx:id="recentFilesLabel" maxWidth="100" alignment="TOP_LEFT" prefWidth="350" style="&#10;" text="Recent files" textAlignment="CENTER" textFill="#9f9f9f" wrapText="true">
                     <font>
                         <Font size="16.0"/>
                     </font>
