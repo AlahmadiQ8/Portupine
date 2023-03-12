@@ -65,7 +65,7 @@
                     </font>
                 </Label>
                 <HBox alignment="TOP_CENTER" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
-                    <Button mnemonicParsing="false" onAction="#openFile" text="Open File"/>
+                    <Button mnemonicParsing="false" onAction="#openFile" text="Open File(s)"/>
                     <Button mnemonicParsing="false" onAction="#loadExample" text="Load example"/>
                 </HBox>
                 <Label fx:id="recentFilesLabel" maxWidth="100" alignment="TOP_LEFT" prefWidth="350" style="&#10;" text="Recent files" textAlignment="CENTER" textFill="#9f9f9f" wrapText="true">
