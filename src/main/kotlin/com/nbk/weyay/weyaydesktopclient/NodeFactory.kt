@@ -6,7 +6,8 @@ import javafx.collections.ObservableList
 class NodeFactory<T, R>(
     private val nodes: ObservableList<R>,
     private val data: ObservableList<T>,
-    private val buildNodeFor: (model: T) -> R
+    private val buildNodeFor: (model: T) -> R,
+    private val additionalNodes: Collection<R> = emptyList()
 ) {
     init {
         data.addListener(ListChangeListener { ch ->
@@ -26,13 +27,19 @@ class NodeFactory<T, R>(
                         nodes[index] = node
                     }
                 } else if (ch.wasRemoved()) {
-                    nodes.remove(ch.from, ch.from + ch.removedSize)
+                    if (nodes.size > 0) nodes.remove(ch.from, ch.from + ch.removedSize)
+                    if (nodes.size == 1) nodes.clear()
                 } else if (ch.wasAdded()) {
+                    val initialSize = nodes.size
                     nodes.addAll(ch.from, buildNodesFor(ch.addedSubList))
+                    if (initialSize == 0) {
+                        nodes.addAll(additionalNodes)
+                    }
                 }
             }
         })
         rebuildAllNodes()
+
     }
 
     private fun buildNodesFor(dataIn: List<T>): List<R> {
