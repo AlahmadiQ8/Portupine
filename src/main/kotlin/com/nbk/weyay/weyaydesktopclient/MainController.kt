@@ -90,7 +90,15 @@ class MainController : CoroutineScope, Initializable {
         NodeFactory(
             recentFilesMenu.items,
             RecentFiles.recentItems,
-            ::recentFilesMenuItemBuilder
+            ::recentFilesMenuItemBuilder,
+            listOf(
+                SeparatorMenuItem(),
+                MenuItem("Open All").apply {
+                    setOnAction {
+                        RecentFiles.recentItems.forEach { openFile(Path.of(it).toFile()) }
+                    }
+                }
+            )
         )
 
         recentFilesMenu.disableProperty().bind(Bindings.isEmpty(RecentFiles.recentItems))
