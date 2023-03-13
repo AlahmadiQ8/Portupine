@@ -11,6 +11,7 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
+import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
@@ -70,32 +71,35 @@ class MainController : CoroutineScope, Initializable {
             saveButton.isDisable = newTab?.userData == null
             saveAsButton.isDisable = newTab?.userData == null
         }
-        NodeFactory(recentFilesContainer.children, RecentFiles.recentItems) { path ->
-            val pathParsed = Path.of(path)
-            BorderPane().apply {
-                left = Hyperlink(pathParsed.fileName.toString()).apply {
-                    setOnAction {
-                        openFile(Path.of(path).toFile())
-                    }
 
-                }
-                right = Hyperlink().apply {
-                    graphic = FontIcon("fas-times").apply { iconColor = Color.gray(0.0, 0.25) }
-                    setOnAction {
-                        RecentFiles.removeRecentFile(path)
+        NodeFactory(
+            recentFilesContainer.children,
+            RecentFiles.recentItems,
+            ::recentFilesHomeScreenBuilder,
+            listOf(
+                BorderPane().apply {
+                    left = Hyperlink("Open All").apply {
+                        setOnAction {
+                            RecentFiles.recentItems.forEach { openFile(Path.of(it).toFile()) }
+                        }
                     }
                 }
-            }
-        }
+            )
+        )
 
-        NodeFactory(recentFilesMenu.items, RecentFiles.recentItems) { path ->
-            val pathParsed = Path.of(path)
-            MenuItem(pathParsed.fileName.toString()).apply {
-                setOnAction {
-                    openFile(Path.of(path).toFile())
+        NodeFactory(
+            recentFilesMenu.items,
+            RecentFiles.recentItems,
+            ::recentFilesMenuItemBuilder,
+            listOf(
+                SeparatorMenuItem(),
+                MenuItem("Open All").apply {
+                    setOnAction {
+                        RecentFiles.recentItems.forEach { openFile(Path.of(it).toFile()) }
+                    }
                 }
-            }
-        }
+            )
+        )
 
         recentFilesMenu.disableProperty().bind(Bindings.isEmpty(RecentFiles.recentItems))
         recentFilesLabel.textProperty().bind(
@@ -279,5 +283,32 @@ class MainController : CoroutineScope, Initializable {
             tableData.add(destination)
         }
         return tableData
+    }
+
+    fun recentFilesHomeScreenBuilder(path: String): Node {
+        val pathParsed = Path.of(path)
+        return BorderPane().apply {
+            left = Hyperlink(pathParsed.fileName.toString()).apply {
+                setOnAction {
+                    openFile(Path.of(path).toFile())
+                }
+
+            }
+            right = Hyperlink().apply {
+                graphic = FontIcon("fas-times").apply { iconColor = Color.gray(0.0, 0.25) }
+                setOnAction {
+                    RecentFiles.removeRecentFile(path)
+                }
+            }
+        }
+    }
+
+    fun recentFilesMenuItemBuilder(path: String): MenuItem {
+        val pathParsed = Path.of(path)
+        return MenuItem(pathParsed.fileName.toString()).apply {
+            setOnAction {
+                openFile(Path.of(path).toFile())
+            }
+        }
     }
 }
