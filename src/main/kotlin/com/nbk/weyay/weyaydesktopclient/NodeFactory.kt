@@ -51,5 +51,8 @@ class NodeFactory<T, R>(
 
     private fun rebuildAllNodes() {
         nodes.setAll(buildNodesFor(data))
+        if (nodes.isNotEmpty()) {
+            nodes.addAll(additionalNodes)
+        }
     }
 }
