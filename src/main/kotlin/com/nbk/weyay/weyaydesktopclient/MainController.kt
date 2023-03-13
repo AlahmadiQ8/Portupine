@@ -110,9 +110,9 @@ class MainController : CoroutineScope, Initializable {
     private fun openFile() {
         val fileChooser = FileChooser()
         fileChooser.title = "Select File"
-        fileChooser.extensionFilters.add(FileChooser.ExtensionFilter("CSV Files", "*.csv"))
-        val file: File? = fileChooser.showOpenDialog(null)
-        openFile(file)
+        fileChooser.extensionFilters.addAll(FileChooser.ExtensionFilter("CSV Files", "*.csv"))
+        val files = fileChooser.showOpenMultipleDialog(null)
+        files.forEach { openFile(it) }
     }
 
     private fun openFile(file: File?) {
