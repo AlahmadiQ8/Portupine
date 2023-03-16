@@ -3,7 +3,7 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.jetbrains.kotlin.jvm' version '1.7.20'
+    id 'org.jetbrains.kotlin.jvm' version '1.8.10'
     id 'org.javamodularity.moduleplugin' version '1.8.12'
     id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.beryx.jlink' version '2.25.0'
@@ -32,14 +32,8 @@ application {
     mainClass = 'com.nbk.weyay.weyaydesktopclient.PortupineApp'
 }
 
-[compileKotlin, compileTestKotlin].forEach {
-    it.kotlinOptions {
-        jvmTarget = '17'
-    }
-}
-
 javafx {
-    version = '17.0.2'
+    version = '19.0.2.1'
     modules = ['javafx.controls', 'javafx.fxml']
 }
 
