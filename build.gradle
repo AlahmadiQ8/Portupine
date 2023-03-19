@@ -30,6 +30,7 @@ tasks.withType(JavaCompile).configureEach {
 application {
     mainModule = 'com.nbk.weyay.weyaydesktopclient'
     mainClass = 'com.nbk.weyay.weyaydesktopclient.PortupineApp'
+    applicationName = 'Portupine'
 }
 
 javafx {
