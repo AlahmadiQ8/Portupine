@@ -6,4 +6,4 @@
   Portupine
 </h1>
 
-<p align="center">A gui app to easily scan a list of hosts and ports to determine accessibility.</p>
+<p align="center">A small utility app to easily scan a list of hosts and ports to determine accessibility.</p>
