@@ -8,7 +8,12 @@
 
 <p align="center">A small utility app to easily scan a list of hosts and ports to determine accessibility.</p>
 
+  <div align="center">
+    <img src="https://user-images.githubusercontent.com/3461501/226526933-5dbd353d-c4b0-4ce1-aaa2-6473b832dfdc.gif" alt="Portupine" width="300">
+  </div>
+
 ---
+
 
 
 
